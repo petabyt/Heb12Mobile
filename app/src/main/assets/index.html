@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Heb12</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<center id='loadingMessage'>
+		<p>
+			Loading...
+		</p>
+	</center>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<!-- Load Bibles -->
+	<script type="text/javascript" src="bibles/kjv.js"></script>
+	<script type="text/javascript" src="bibles/bbe.js"></script>
+</head>
+<body>
+<div id="top">
+	<center>
+		<select id="book" onchange="update()"></select>
+		<select id="chapter" onchange="update()"></select>
+		<div id="hamburger" class="button" onclick="settings('hehe')">
+			<img src="images/menu.svg" width="45" >
+		</div>
+	</center>
+</div>
+<div id="main" onclick="settings('close')">
+	<p id="page">
+		
+	</p>
+</div>
+<div id="bottom">
+	<div class="button" style="float: left;" onclick="update('previous')">
+		<span>Previous</span>
+	</div>
+	<div class="button" style="float: right;" onclick="update('next')">
+		<span>Next</span>
+	</div>
+</div>
+<div class="popup">
+	<div id="popup">
+		
+	</div>
+	<div class="close" onclick="this.parentElement.style.display = 'none'">
+		<p><b>Okay</b></p>
+	</div>
+</div>
+<div id="settings">
+	<center>
+		<p class="large">Heb12 Mobile</p>
+		<span>Version 1.3</span>
+		<br><br>
+		<input id="search" placeholder="John 3:16">
+		<br><br><hr>
+		<div id="iconToolbar">
+			<div class="icon">
+				<img src="images/settings.svg" width="45" onclick="activity.settings()">
+			</div>
+			<div class="icon">
+				<img src="images/close.svg" width="45" onclick="activity.close()">
+			</div>
+		</div>
+		<hr><br>
+		<!-- Bookmarks -->
+	</center>
+</div>
+</body>
+<script type="text/javascript" src="javascript.js"></script>
+</html>
