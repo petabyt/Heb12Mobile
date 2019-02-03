@@ -73,6 +73,7 @@ select:active {
 	border: 1px solid black;
 	background: white;
 	display: none;
+	z-index: 1;
 }
 
 .popup .close {
@@ -135,10 +136,6 @@ select:active {
 	float: left;
 }
 
-#iconToolbar {
-	
-}
-
 .icon {
 	width: 45px;
 	height: 45px;
@@ -147,4 +144,26 @@ select:active {
 
 .icon:active {
 	background: #e8e8e8;
+}
+
+.button.right {
+	float: right;
+}
+.button.left {
+	float: left;
+}
+
+#translation {
+	width: auto;
+}
+
+#kjvOnline {
+	position: absolute;
+	top: 50px;
+	width: 100%;
+	height: calc(100% - 100px);
+	border: transparent;
+	overflow: scroll;
+	display: none;
+	background: white;
 }

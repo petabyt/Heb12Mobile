@@ -1,6 +1,10 @@
 var books = [ "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1st Samuel", "2nd Samuel", "1st Kings", "2nd Kings", "1st Chronicles", "2nd Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1st Corinthians", "2nd Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1st Thessalonians", "2nd Thessalonians", "1st Timothy", "2nd Timothy", "Titus", "Philemon", "Hebrews", "James", "1st Peter", "2nd Peter", "1st John", "2nd John", "3rd John", "Jude", "Revelation" ];
 var currentBookNumber = 1;
 var currentTranslation = eval(bbe);
+var session = {
+	breakAfterVerse:true,
+	mouseDown:false
+}
 
 // When the page loads
 window.onload = function() {
@@ -48,18 +52,22 @@ function load(book,chapter,verse) {
 	// Return verse or verses
 	if (isNaN(verse)) {
 		for (var i = 0; i < page.length; i++) {
-			finalResult += " <b id='verse' onclick='notify(" + '"verse-' + (i + 1) + '"' + ")'>" + (i + 1) + "</b> " + page[i];
+			if (session.breakAfterVerse) {
+				finalResult += " <b id='verse' onclick='notify(" + '"verse-' + (i + 1) + '"' + ")'>" + (i + 1) + "</b> " + page[i] + "<br>";
+			} else {
+				finalResult += " <b id='verse' onclick='notify(" + '"verse-' + (i + 1) + '"' + ")'>" + (i + 1) + "</b> " + page[i];
+			}
 		}
 	} else {
 		finalResult = page[verse - 1];
 	}
 
-	// Remove wierd things inserted inside text in KJV version
-	finalResult = finalResult.replace("(","");
-	finalResult = finalResult.replace(")","");
-	finalResult = finalResult.replace(":","");
-	finalResult = finalResult.replace("{","");
-	finalResult = finalResult.replace("}","");
+	// Remove wierd things inserted inside text in Offline KJV version
+	finalResult = finalResult.replace(/\{[a-zA-Z0-9 .,;]+: or, [a-zA-Z0-9 .,;]+\}/g,"");
+	finalResult = finalResult.replace(/:/g,"");
+	finalResult = finalResult.replace(/\}/g,"");
+	finalResult = finalResult.replace(/\{/g,"");
+	finalResult = finalResult.replace(/\.\.\./g,"");
 
 	return finalResult;
 }
@@ -71,12 +79,14 @@ function notify(text) {
 		document.getElementById("popup").innerHTML = "<h2>Welcome to Heb12 Mobile!</h2><br><span><b>Tip</b>: Tap on the bold number in front of a verse to get some info about it.</span>";
 	} else if (text.startsWith("verse")) {
 
-		// A popup for showing a single verse
+		// Popup for showing a single verse
 		var book = document.getElementById('book').value;
 		var chap = document.getElementById('chapter').value;
 		var verse = text.split("-")[1];
 		var entire = book + " " + chap + ":" + verse;
 		document.getElementById("popup").innerHTML = "<h2>" + entire + "</h2><span>" + load(book, chap, verse) + "</span><br><span><div style='width:200px;' class='button' onclick='search(" + '"' + entire + '"' + ")'><span>Search verse on Google</span></div></span>";
+	} else if (text == "translation") {
+		document.getElementById("popup").innerHTML = '<h2>Translation</h2> <br> <span><b>B</b>ible in <b>B</b>asic <b>English</b> (BBE)</span>  <div class="button"> Use This One </div>';
 	} else {
 		document.getElementById("popup").innerHTML = text;
 	}
@@ -86,6 +96,19 @@ function notify(text) {
 function update(option) {
 	var book = document.getElementById('book').value;
 	var chapter = Number(document.getElementById('chapter').value);
+	var translation = document.getElementById('translation').value;
+
+	if (translation.startsWith("BBE")) {
+		currentTranslation = eval(bbe);
+	} else if (translation.startsWith("KJV") && translation.endsWith("(Offline)")) {
+		currentTranslation = eval(kjv);
+	} else if (translation.startsWith("KJV") && translation.endsWith("(Online)")) {
+		document.getElementById('kjvOnline').style.display = "block";
+		// Not actually loading anything
+		currentTranslation = eval(bbe);
+	} else {
+		document.getElementById('kjvOnline').style.display = "none";
+	}
 
 	// If the user goes back at the first chapter of a book, go back to the previous book
 	if (option == "next") {
@@ -107,7 +130,14 @@ function update(option) {
 			chapter = currentTranslation[currentBookNumber - 1].chapters.length;
 		}
 	}
-	document.getElementById('page').innerHTML = load(book, chapter);
+	if (translation.startsWith("KJV") && translation.endsWith("(Online)")) {
+		document.getElementById('book').value = book;
+		document.getElementById('chapter').value = chapter;
+		document.getElementById('kjvOnline').src = "http://labs.bible.org/api/?passage=" + book + " " + chapter + " && formatting=full"
+	} else {
+		document.getElementById('page').innerHTML = load(book, chapter);
+	}
+	
 }
 
 // A simple function to search somthing on Google
