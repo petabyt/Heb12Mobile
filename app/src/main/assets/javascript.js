@@ -21,6 +21,7 @@ window.onload = function() {
 
 	// load Hebrews 12
 	document.getElementById('page').innerHTML = load("Hebrews", 12);
+	update();
 }
 
 // Function to get verse or verses from the json files
@@ -87,6 +88,8 @@ function notify(text) {
 		document.getElementById("popup").innerHTML = "<h2>" + entire + "</h2><span>" + load(book, chap, verse) + "</span><br><span><div style='width:200px;' class='button' onclick='search(" + '"' + entire + '"' + ")'><span>Search verse on Google</span></div></span>";
 	} else if (text == "translation") {
 		document.getElementById("popup").innerHTML = '<h2>Translation</h2> <br> <span><b>B</b>ible in <b>B</b>asic <b>English</b> (BBE)</span>  <div class="button"> Use This One </div>';
+	} else if (text == "settings") {
+		document.getElementById("popup").innerHTML = '<h2>Settings</h2> <br> haha i was way to lazy to do this part';
 	} else {
 		document.getElementById("popup").innerHTML = text;
 	}
@@ -97,7 +100,7 @@ function update(option) {
 	var book = document.getElementById('book').value;
 	var chapter = Number(document.getElementById('chapter').value);
 	var translation = document.getElementById('translation').value;
-
+	document.getElementById("kjvOnline").style.display = "none";
 	if (translation.startsWith("BBE")) {
 		currentTranslation = eval(bbe);
 	} else if (translation.startsWith("KJV") && translation.endsWith("(Offline)")) {
@@ -107,7 +110,7 @@ function update(option) {
 		// Not actually loading anything
 		currentTranslation = eval(bbe);
 	} else {
-		document.getElementById('kjvOnline').style.display = "none";
+		document.getElementById("kjvOnline").style.display = "none";
 	}
 
 	// If the user goes back at the first chapter of a book, go back to the previous book
@@ -133,7 +136,12 @@ function update(option) {
 	if (translation.startsWith("KJV") && translation.endsWith("(Online)")) {
 		document.getElementById('book').value = book;
 		document.getElementById('chapter').value = chapter;
-		document.getElementById('kjvOnline').src = "http://labs.bible.org/api/?passage=" + book + " " + chapter + " && formatting=full"
+		var iframe = document.getElementById('kjvOnline');
+		iframe.src = "http://labs.bible.org/api/?passage=" + book + " " + chapter + " && formatting=full";
+		iframe.onload = function() {
+			var body = iframe.contentWindow.document.querySelector('body');
+			 body.innerHTML = "fart";
+		}
 	} else {
 		document.getElementById('page').innerHTML = load(book, chapter);
 	}

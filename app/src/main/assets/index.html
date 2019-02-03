@@ -27,7 +27,7 @@
 	<p id="page">
 		
 	</p>
-	<iframe id="kjvOnline" src="google.com" onmouseover="settings('close')">
+	<iframe id="kjvOnline" onmouseover="settings('close')">
 		
 	</iframe>
 </div>
@@ -62,17 +62,17 @@
 			<option>
 				KJV (King James Version) (Offline)
 			</option>
-			<option>
+			<option selected="selected">
 				KJV (King James Version) (Online)
 			</option>
 		</select>
 		<br><hr>
 		<div id="iconToolbar">
 			<div class="icon">
-				<img src="images/settings.svg" width="45" onclick="activity.settings()">
+				<img src="images/settings.svg" width="45" onclick="notify('settings')">
 			</div>
 			<div class="icon">
-				<img src="images/close.svg" width="45" onclick="activity.close()">
+				<img src="images/close.svg" width="45" onclick='interface.updateSetting("other","close")'>
 			</div>
 		</div>
 		<hr><br>
