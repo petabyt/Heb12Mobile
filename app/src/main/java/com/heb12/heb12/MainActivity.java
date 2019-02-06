@@ -15,6 +15,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.*;
 import java.io.FileOutputStream;
+import android.content.ClipboardManager;
+import android.content.ClipData;
 import java.io.ObjectOutputStream;
 
 
@@ -30,11 +32,12 @@ public class MainActivity extends AppCompatActivity {
         // Create Heb12 config file if not already created
         FileOutputStream outputStream;
         try {
-            outputStream = openFileOutput("fart.txt", Context.MODE_PRIVATE);
+            outputStream = openFileOutput("Heb12 Test", Context.MODE_PRIVATE);
             outputStream.write("hehe".getBytes());
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
         }
 
         // Load the files in the webview
@@ -50,12 +53,16 @@ public class MainActivity extends AppCompatActivity {
     // Update settings --- cool thingy: Toast.makeText(MainActivity.this, data, Toast.LENGTH_SHORT).show();
     private class JavaScriptInterface {
         @JavascriptInterface
-        public void updateSetting(String type, String data) {
+        public void exec(String type, String data) {
             if (type.equals("other")) {
                 if (data.equals("close")) {
                     finish();
                 }
 
+            } else if (type.equals("copy")) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Verse Copied", data);
+                clipboard.setPrimaryClip(clip);
             }
         }
     }

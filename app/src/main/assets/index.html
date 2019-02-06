@@ -25,7 +25,7 @@
 </div>
 <div id="main" onclick="settings('close')">
 	<p id="page">
-		
+		Hmm. There was an error.
 	</p>
 	<iframe id="kjvOnline" onmouseover="settings('close')">
 		
@@ -49,34 +49,44 @@
 </div>
 <div id="settings">
 	<center>
-		<p class="large">Heb12 Mobile</p>
+		<p class="large"><span id="hehe" onclick="notify('hehe')">Heb12</span> Mobile</p>
 		<span>Version 1.3</span>
 		<br><br>
 		<input id="search" placeholder="John 3:16">
+		<div class="button bg" onclick="random()">
+			Random
+		</div>
 		<br><hr>
 		<span>Current Translation:</span>
 		<select id="translation" onchange="update()">
-			<option>
+			<option selected="selected">
 				BBE (Bible in Basic English) (Offline)
 			</option>
 			<option>
 				KJV (King James Version) (Offline)
 			</option>
-			<option selected="selected">
+			<option>
 				KJV (King James Version) (Online)
 			</option>
 		</select>
 		<br><hr>
 		<div id="iconToolbar">
 			<div class="icon">
+				<img src="images/info.svg" width="45" onclick='notify("info")'>
+			</div>
+			<div class="icon">
 				<img src="images/settings.svg" width="45" onclick="notify('settings')">
 			</div>
 			<div class="icon">
-				<img src="images/close.svg" width="45" onclick='interface.updateSetting("other","close")'>
+				<img src="images/close.svg" width="45" onclick='interface.doit("other","close")'>
 			</div>
 		</div>
 		<hr><br>
-		<!-- Bookmarks -->
+		<div id="favorite">
+			<p class="text big">Psalms 5:3</p>
+			<br><br>
+			<p class="text">My voice will come to you in the morning, O Lord; in the morning will I send my prayer to you, and keep watch.</p>
+		</div>
 	</center>
 </div>
 </body>
