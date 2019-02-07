@@ -1,2 +1,4 @@
-# Heb12 Mobile Html5
-A Html5 version of Heb12 Mobile.
+# Heb12 Mobile
+A testing repo for Heb12 Mobile
+#
+Download the app at https://github.com/pufflegamerz/Heb12Mobile/blob/master/releases/app-debug.zip
