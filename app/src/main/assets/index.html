@@ -78,7 +78,7 @@
 				<img src="images/settings.svg" width="45" onclick="notify('settings')">
 			</div>
 			<div class="icon">
-				<img src="images/close.svg" width="45" onclick='interface.doit("other","close")'>
+				<img src="images/close.svg" width="45" onclick='interface.exec("other","close")'>
 			</div>
 		</div>
 		<hr><br>
@@ -86,6 +86,9 @@
 			<p class="text big">Psalms 5:3</p>
 			<br><br>
 			<p class="text">My voice will come to you in the morning, O Lord; in the morning will I send my prayer to you, and keep watch.</p>
+		</div>
+		<div class="button bg" onclick="interface.exec('write','foo\nfoo\nbar')">
+			Write text
 		</div>
 	</center>
 </div>

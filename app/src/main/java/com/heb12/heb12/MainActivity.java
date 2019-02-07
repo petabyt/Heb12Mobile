@@ -17,6 +17,7 @@ import java.io.*;
 import java.io.FileOutputStream;
 import android.content.ClipboardManager;
 import android.content.ClipData;
+import android.os.Environment;
 import java.io.ObjectOutputStream;
 
 
@@ -28,26 +29,45 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        boolean firstTime = false;
 
-        // Create Heb12 config file if not already created
-        FileOutputStream outputStream;
+        // Create Heb12 config file
+        File config = new File(Environment.getExternalStorageDirectory(), "Heb12Config");
         try {
-            outputStream = openFileOutput("Heb12 Test", Context.MODE_PRIVATE);
-            outputStream.write("hehe".getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+
+            // Create config file if it doesn't already exist
+            if (!config.exists()) {
+                config.createNewFile();
+                firstTime = true;
+            }
+
+            // Read file and send it to the WebView
+            int length = (int) config.length();
+            byte[] bytes = new byte[length];
+
+            FileInputStream reader = new FileInputStream(config);
+            try {
+                reader.read(bytes);
+            } finally {
+                reader.close();
+            }
+
+            String content = new String(bytes);
+
+            // Load the files in the webview
+            WebView view = (WebView) findViewById(R.id.WebView);
+            view.getSettings().setJavaScriptEnabled(true);
+
+            view.loadUrl("file:///android_asset/index.html?[\"" + firstTime + "\",`" + content + "`]");
+            getSupportActionBar().hide();
+
+            // Add a Javascript interface
+            view.addJavascriptInterface(new JavaScriptInterface(), "interface");
+
+
+        } catch (IOException e) {
+            Toast.makeText(this, "Exception: " + e.toString(), Toast.LENGTH_LONG).show();
         }
-
-        // Load the files in the webview
-        WebView view = (WebView) findViewById(R.id.WebView);
-        view.getSettings().setJavaScriptEnabled(true);
-        view.loadUrl("file:///android_asset/index.html?['default','default']");
-        getSupportActionBar().hide();
-
-        // Add a Javascript interface
-        view.addJavascriptInterface(new JavaScriptInterface(), "interface");
     }
 
     // Update settings --- cool thingy: Toast.makeText(MainActivity.this, data, Toast.LENGTH_SHORT).show();
@@ -58,11 +78,23 @@ public class MainActivity extends AppCompatActivity {
                 if (data.equals("close")) {
                     finish();
                 }
-
             } else if (type.equals("copy")) {
+
+                // Copy text to clipboard
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Verse Copied", data);
                 clipboard.setPrimaryClip(clip);
+            } else if (type.equals("write")) {
+
+                // Function to update the config file
+                File config = new File(Environment.getExternalStorageDirectory(), "Heb12Config");
+                try {
+                    FileOutputStream stream = new FileOutputStream(config);
+                    stream.write(data.getBytes());
+                    stream.close();
+                } catch (IOException e) {
+                    Toast.makeText(MainActivity.this, "Cannot write to config file", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

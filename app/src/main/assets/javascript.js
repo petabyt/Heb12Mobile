@@ -1,13 +1,18 @@
 var books = [ "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1st Samuel", "2nd Samuel", "1st Kings", "2nd Kings", "1st Chronicles", "2nd Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1st Corinthians", "2nd Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1st Thessalonians", "2nd Thessalonians", "1st Timothy", "2nd Timothy", "Titus", "Philemon", "Hebrews", "James", "1st Peter", "2nd Peter", "1st John", "2nd John", "3rd John", "Jude", "Revelation" ];
 var currentBookNumber = 1;
-var currentTranslation = eval(bbe);
+var data;
 
-// Settings
+// Just a bunch of variables
 var session = {
+	version:"1.3",
 	breaksAfterVerse:1,
 	mouseDown:false,
 	titleClicks:0,
-	currentVerse:"Hmmmm."
+	currentVerse:"Hmmmm.",
+	currentTranslation:"",
+	currentTranslationString:"",
+	theme:"",
+	devmode:false
 }
 
 // When the page loads
@@ -23,8 +28,48 @@ window.onload = function() {
 		document.getElementById('chapter').innerHTML += "<option>" + i + "</option>";
 	}
 
+	if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+		// If viewing via web on iphone
+		session.devmode = true;
+	}
+
+	if (!session.devmode) {
+		// Open data
+		data = window.location.href.split("?")[1];
+		data = data.replace(/%22/g,'"');
+		data = data.replace(/%20/g," ");
+		data = eval(data);
+
+		// If loading the app for the first time.
+		if (data[0] == "true") {
+			notify("firsttime");
+
+			// Load the default config file
+			interface.exec("write",`
+/* Heb12 Configuration File - Edit at your own risk! */
+\n
+currentTranslation=BBE;
+\n
+lastBook=Hebrews;
+\n
+lastChapter=12;
+			`);
+		}
+
+		if (data[1] == "") {
+			notify("Configuration File error");
+		} else {
+			var configuration = data[1];
+			configuration = configuration.replace(/\/\*[A-Za-z0-9 -!.:]+\*\//g,"");
+			configuration = configuration.split(";");
+			document.getElementById('book').value = configuration[1].split("=")[1];
+			document.getElementById('chapter').value = configuration[2].split("=")[1];
+		}
+	}
+
 	// load Hebrews 12
-	document.getElementById('page').innerHTML = load("Hebrews", 12);
+	updateTranslation();
+	document.getElementById('page').innerHTML = load(document.getElementById('book').value, document.getElementById('chapter').value);
 	update();
 }
 
@@ -34,8 +79,8 @@ function load(book,chapter,verse) {
 	var booky;
 	for (var i = 0; i < books.length; i++) {
 		if (books[i] == book) {
-			page = currentTranslation[i].chapters[chapter - 1];
-			booky = currentTranslation[i].chapters.length;
+			page = session.currentTranslation[i].chapters[chapter - 1];
+			booky = session.currentTranslation[i].chapters.length;
 			currentBookNumber = i;
 		}
 	}
@@ -83,13 +128,34 @@ function notify(text) {
 		var verse = text.split("-")[1];
 		var entire = book + " " + chap + ":" + verse;
 		session.currentVerse = entire;
-		document.getElementById("popup").innerHTML = "<h2>" + entire + "</h2><span>" + load(book, chap, verse) + "</span><br><span><div style='width:200px;' class='button bg' onclick='search(" + '"' + entire + '"' + ")'><span>Search verse on Google</span></div><br><br><div class='button bg' onclick=" + "'" + 'interface.exec("copy","' + session.currentVerse + '")' + "'" + ">Copy verse</div>";
-	} else if (text == "translation") {
-		document.getElementById("popup").innerHTML = '<h2>Translation</h2> <br> <span><b>B</b>ible in <b>B</b>asic <b>English</b> (BBE)</span>  <div class="button"> Use This One </div>';
-	} else if (text == "settings") {
-		document.getElementById("popup").innerHTML = '<h2>Settings</h2> <br> haha i was way to lazy to do this part';
+		document.getElementById("popup").innerHTML = 
+		`
+		<h2>` + entire + `</h2>
+		<span>` + load(book, chap, verse) + `</span>
+		<br><br>
+		<div style='width:200px;' class='button bg' onclick="search('` + entire + `')">Search verse on Google</div>
+		<br><br>
+		<div class='button bg' onclick="interface.exec('copy','` + session.currentVerse + `')">Copy verse</div> 
+		`;
+	} else if (text == "firsttime") {
+		document.getElementById("popup").innerHTML = '<h2>Welcome to Heb12!</h2> <br> Testing';
 	} else if (text == "info") {
-		document.getElementById("popup").innerHTML = '<img style="display:inline; float:left; margin-right:10px;" src="images/logo.png" width="150"><div style="display:inline;"><h2>Heb12 Mobile v1.3</h2><p>Welcome to Heb12 Mobile! This app was designed to make reading the bible easier than ever.</p></div><br><h2>Credits</h2> <p>Pufflegamerz aka Petabyte Studios - Programming</p> <p>MasterOfTheTiger - Founder of Heb12 Ministries</p> <p>Material.io - Material icons</p> <p>Bible Labs - Formatted KJV API</p><p><a href="https://github.com/thiagobodruk" target="_blank">@thiagobodruk</a> - Offline Bible JSON files</p><a target="_blank" href="https://github.com/heb12/heb12-android">Visit Github repository</a>';
+		document.getElementById("popup").innerHTML = 
+		`
+		<img style="display:inline; float:left; margin-right:10px;" src="images/logo.png" width="150">
+		<div style="display:inline;">
+		   <h2>Heb12 Mobile v1.3</h2>
+		   <p>Welcome to Heb12 Mobile! This app was designed to make reading the bible easier than ever.</p>
+		</div>
+		<br>
+		<h2>Credits</h2>
+		<p>Pufflegamerz aka Petabyte Studios - Programming</p>
+		<p>MasterOfTheTiger - Founder of Heb12 Ministries</p>
+		<p>Material.io - Material icons</p>
+		<p>Bible Labs - Formatted KJV API</p>
+		<p><a href="https://github.com/thiagobodruk" target="_blank">@thiagobodruk</a> - Offline Bible JSON files</p>
+		<a target="_blank" href="https://github.com/heb12/heb12-android">Visit Github repository</a>
+		`;
 	} else if (text == 'hehe') {
 		session.titleClicks++
 		if (session.titleClicks >= 10) {
@@ -105,7 +171,7 @@ function notify(text) {
 // Visit a random chapter
 function random() {
 	var randomBook = Math.floor(Math.random() * books.length);
-	var randomChapter = Math.floor(Math.random() * currentTranslation[randomBook].chapters.length);
+	var randomChapter = Math.floor(Math.random() * session.currentTranslation[randomBook].chapters.length);
 	document.getElementById('page').innerHTML = load(books[randomBook], randomChapter);
 	settings("close");
 }
@@ -114,22 +180,13 @@ function random() {
 function update(option) {
 	var book = document.getElementById('book').value;
 	var chapter = Number(document.getElementById('chapter').value);
-	var translation = document.getElementById('translation').value;
 	document.getElementById("kjvOnline").style.display = "none";
-	if (translation.startsWith("BBE")) {
-		currentTranslation = eval(bbe);
-	} else if (translation.startsWith("KJV") && translation.endsWith("(Offline)")) {
-		currentTranslation = eval(kjv);
-	} else if (translation.startsWith("KJV") && translation.endsWith("(Online)")) {
-		document.getElementById('kjvOnline').style.display = "block";
-		currentTranslation = eval(bbe); // If current translation is KJV Online, use BBE so that everything works.
-	} else {
-		document.getElementById("kjvOnline").style.display = "none";
-	}
+
+	updateTranslation();
 
 	// If the user goes back at the first chapter of a book, go back to the previous book
 	if (option == "next") {
-		if (currentTranslation[currentBookNumber].chapters.length == Number(document.getElementById('chapter').value)) {
+		if (session.currentTranslation[currentBookNumber].chapters.length == Number(document.getElementById('chapter').value)) {
 			if (book == "Revelation" && chapter == 22) {
 				console.log("End of Bible :-/");
 			} else {
@@ -144,10 +201,10 @@ function update(option) {
 			chapter--;
 		} else {
 			book = books[currentBookNumber - 1];
-			chapter = currentTranslation[currentBookNumber - 1].chapters.length;
+			chapter = session.currentTranslation[currentBookNumber - 1].chapters.length;
 		}
 	}
-	if (translation.startsWith("KJV") && translation.endsWith("(Online)")) {
+	if (session.currentTranslationString == "KJVONLINE") {
 		document.getElementById('book').value = book;
 		document.getElementById('chapter').value = chapter;
 		var iframe = document.getElementById('kjvOnline');
@@ -155,7 +212,36 @@ function update(option) {
 	} else {
 		document.getElementById('page').innerHTML = load(book, chapter);
 	}
-	
+	// Update the configuration file
+	if (!session.devmode) {
+		interface.exec("write",`
+/* Heb12 Configuration File - Edit at your own risk! */
+\n
+currentTranslation=` + session.currentTranslationString + `;
+\n
+lastBook=` + book + `;
+\n
+lastChapter=` + chapter + `;
+	    `);
+	}
+}
+
+// Update the current translation
+function updateTranslation() {
+	var translation = document.getElementById('translation').value;
+	if (translation.startsWith("BBE")) {
+		session.currentTranslation = eval(bbe);
+		session.currentTranslationString = "BBE";
+	} else if (translation.startsWith("KJV") && translation.endsWith("(Offline)")) {
+		session.currentTranslation = eval(kjv);
+		session.currentTranslationString = "KJV";
+	} else if (translation.startsWith("KJV") && translation.endsWith("(Online)")) {
+		document.getElementById('kjvOnline').style.display = "block";
+		session.currentTranslationString = "KJVONLINE";
+		session.currentTranslation = eval(kjv); // If current translation is KJV Online, use Offline KJV so that everything works.
+	} else {
+		document.getElementById("kjvOnline").style.display = "none";
+	}
 }
 
 // A simple function to search somthing on Google
