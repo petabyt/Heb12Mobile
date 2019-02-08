@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Update settings --- cool thingy: Toast.makeText(MainActivity.this, data, Toast.LENGTH_SHORT).show();
+    // Update settings --- toasty code: Toast.makeText(MainActivity.this, "foo", Toast.LENGTH_SHORT).show();
     private class JavaScriptInterface {
         @JavascriptInterface
         public void exec(String type, String data) {

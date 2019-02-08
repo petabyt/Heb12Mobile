@@ -2,7 +2,7 @@ var books = [ "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshu
 var currentBookNumber = 1;
 var data;
 
-// Just a bunch of variables
+// Session Variables
 var session = {
 	version:"1.3",
 	breaksAfterVerse:1,
@@ -12,7 +12,7 @@ var session = {
 	currentTranslation:"",
 	currentTranslationString:"",
 	theme:"",
-	devmode:false
+	devmode:true
 }
 
 // When the page loads
@@ -33,6 +33,7 @@ window.onload = function() {
 		session.devmode = true;
 	}
 
+	// Load data
 	if (!session.devmode) {
 		// Open data
 		data = window.location.href.split("?")[1];
@@ -45,17 +46,10 @@ window.onload = function() {
 			notify("firsttime");
 
 			// Load the default config file
-			interface.exec("write",`
-/* Heb12 Configuration File - Edit at your own risk! */
-\n
-currentTranslation=BBE;
-\n
-lastBook=Hebrews;
-\n
-lastChapter=12;
-			`);
-		}
+			interface.exec("write",`/* Heb12 Configuration File - Edit at your own risk! */\ncurrentTranslation=BBE;\nlastBook=Hebrews;\nlastChapter=12;`);
+		}	
 
+		// Parse config file into JS
 		if (data[1] == "") {
 			notify("Configuration File error");
 		} else {
@@ -77,6 +71,8 @@ lastChapter=12;
 function load(book,chapter,verse) {
 	var page;
 	var booky;
+
+	// Get chapter data
 	for (var i = 0; i < books.length; i++) {
 		if (books[i] == book) {
 			page = session.currentTranslation[i].chapters[chapter - 1];
@@ -204,6 +200,8 @@ function update(option) {
 			chapter = session.currentTranslation[currentBookNumber - 1].chapters.length;
 		}
 	}
+
+	// Show overlay iframe if translation is KJV Online
 	if (session.currentTranslationString == "KJVONLINE") {
 		document.getElementById('book').value = book;
 		document.getElementById('chapter').value = chapter;
@@ -212,17 +210,10 @@ function update(option) {
 	} else {
 		document.getElementById('page').innerHTML = load(book, chapter);
 	}
+
 	// Update the configuration file
 	if (!session.devmode) {
-		interface.exec("write",`
-/* Heb12 Configuration File - Edit at your own risk! */
-\n
-currentTranslation=` + session.currentTranslationString + `;
-\n
-lastBook=` + book + `;
-\n
-lastChapter=` + chapter + `;
-	    `);
+		interface.exec("write",`/* Heb12 Configuration File - Edit at your own risk! */\ncurrentTranslation=` + session.currentTranslationString + `;\nlastBook=` + book + `;\nlastChapter=` + chapter + `;`);
 	}
 }
 
