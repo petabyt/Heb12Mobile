@@ -125,20 +125,18 @@ function notify(text) {
 		var entire = book + " " + chap + ":" + verse;
 		session.currentVerse = entire;
 
-		popup.innerHTML
-		`
+		popup.innerHTML = `
 		<h2>` + entire + `</h2>
 		<span>` + load(book, chap, verse) + `</span>
 		<br><br>
 		<div style='width:200px;' class='button bg' onclick="search('` + entire + `')">Search verse on Google</div>
 		<br><br>
-		<div class='button bg' onclick="interface.exec('copy','` + session.currentVerse + `')">Copy verse</div> 
-		`;
+		<div class='button bg' onclick="interface.exec('copy','` + session.currentVerse + `')">Copy verse</div> `;
 	} else if (text == "firsttime") {
-		popup.innerHTML = '<h2>Welcome to Heb12!</h2> <br> Testing';
+		popup.innerHTML = `
+		`;
 	} else if (text == "info") {
-		popup.innerHTML = 
-		`
+		popup.innerHTML = `
 		<img style="display:inline; float:left; margin-right:10px;" src="images/logo.png" width="150">
 		<div style="display:inline;">
 		   <h2>Heb12 Mobile v1.3</h2>
@@ -151,8 +149,7 @@ function notify(text) {
 		<p>Material.io - Material icons</p>
 		<p>Bible Labs - Formatted KJV API</p>
 		<p><a href="https://github.com/thiagobodruk" target="_blank">@thiagobodruk</a> - Offline Bible JSON files</p>
-		<a target="_blank" href="https://github.com/heb12/heb12-android">Visit Github repository</a>
-		`;
+		<a target="_blank" href="https://github.com/heb12/heb12-android">Visit Github repository</a>`;
 	} else if (text == 'hehe') {
 		session.titleClicks++
 		if (session.titleClicks >= 10) {
