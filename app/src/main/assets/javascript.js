@@ -61,59 +61,99 @@ window.onload = function() {
 
 	// load Hebrews 12
 	updateTranslation();
-	document.getElementById('page').innerHTML = load(document.getElementById('book').value, document.getElementById('chapter').value);
+	document.getElementById('page').innerHTML = load("Hebrews",12);
 	update();
 }
 
 // Function to get verse or verses from the json files
 function load(book,chapter,verse) {
-	var page;
-	var booky;
+	var breaks = "<br>".repeat(session.breaksAfterVerse);
 
-	// Get chapter data
-	for (var i = 0; i < books.length; i++) {
-		if (books[i] == book) {
-			page = session.currentTranslation[i].chapters[chapter - 1];
-			booky = session.currentTranslation[i].chapters.length;
-			currentBookNumber = i;
+	if (session.currentTranslationString == "KJV2000") {
+
+		for (var i = 0; i < books.length; i++) {
+			if (books[i] == book) {
+				bookNum = i;
+			}
 		}
-	}
 
-	document.getElementById('chapter').innerHTML = "";
-
-	// Make accurate chapter length
-	for (var i = 1; i <= booky; i++) {
-		document.getElementById('chapter').innerHTML += "<option>" + i + "</option>";
-	}
-
-	document.getElementById('book').value = book;
-	document.getElementById('chapter').value = chapter;
-	
-	var finalResult = "";
-
-	// Return verse or verses
-	if (isNaN(verse)) {
-		for (var i = 0; i < page.length; i++) {
-			var breaks = "<br>".repeat(session.breaksAfterVerse);
-			finalResult += " <b id='verse' onclick='notify(" + '"verse-' + (i + 1) + '"' + ")'>" + (i + 1) + "</b> " + page[i] + breaks;
+		// Make accurate chapter length
+		document.getElementById('chapter').innerHTML = "";
+		for (var i = 1; i <= kjv2000.osis.osisText.div[bookNum].chapter.length; i++) {
+			document.getElementById('chapter').innerHTML += "<option>" + i + "</option>";
 		}
+
+		document.getElementById('book').value = book;
+		document.getElementById('chapter').value = chapter;
+
+		// For 1 chapter books
+		if (!kjv2000.osis.osisText.div[bookNum].chapter.verse) {
+			var verses = kjv2000.osis.osisText.div[bookNum].chapter[chapter - 1].verse;
+		} else {
+			document.getElementById('chapter').innerHTML = "<option>1</option>";
+			var verses = kjv2000.osis.osisText.div[bookNum].chapter.verse;
+		}
+
+		var page = "";
+		if (!isNaN(verse)) {
+			page = verses[verse].text;
+			console.log();
+		} else {
+			for (var i = 0; i < verses.length; i++) {
+				page += " <b id='verse' onclick='notify(" + '"verse-' + (i + 1) + '"' + ")'>" + (i + 1) + "</b> " + verses[i].text + breaks;
+			}
+		}
+
+		return page;
 	} else {
-		finalResult = page[verse - 1];
+		var page;
+		var booky;
+
+		// Get chapter data
+		for (var i = 0; i < books.length; i++) {
+			if (books[i] == book) {
+				page = session.currentTranslation[i].chapters[chapter - 1];
+				booky = session.currentTranslation[i].chapters.length;
+				currentBookNumber = i;
+			}
+		}
+
+		document.getElementById('chapter').innerHTML = "";
+
+		// Make accurate chapter length
+		for (var i = 1; i <= booky; i++) {
+			document.getElementById('chapter').innerHTML += "<option>" + i + "</option>";
+		}
+
+		document.getElementById('book').value = book;
+		document.getElementById('chapter').value = chapter;
+		
+		var finalResult = "";
+
+		// Return verse or verses
+		if (isNaN(verse)) {
+			for (var i = 0; i < page.length; i++) {
+				var breaks = "<br>".repeat(session.breaksAfterVerse);
+				finalResult += " <b id='verse' onclick='notify(" + '"verse-' + (i + 1) + '"' + ")'>" + (i + 1) + "</b> " + page[i] + breaks;
+			}
+		} else {
+			finalResult = page[verse - 1];
+		}
+
+		// Remove wierd things inserted inside text in Offline KJV version
+		finalResult = finalResult.replace(/\{[a-zA-Z0-9 .,;]+: or, [a-zA-Z0-9 .,;]+\}/g,"");
+		finalResult = finalResult.replace(/:/g,"");
+		finalResult = finalResult.replace(/\}/g,"");
+		finalResult = finalResult.replace(/\{/g,"");
+		finalResult = finalResult.replace(/\.\.\./g,"");
+
+		return finalResult;
 	}
-
-	// Remove wierd things inserted inside text in Offline KJV version
-	finalResult = finalResult.replace(/\{[a-zA-Z0-9 .,;]+: or, [a-zA-Z0-9 .,;]+\}/g,"");
-	finalResult = finalResult.replace(/:/g,"");
-	finalResult = finalResult.replace(/\}/g,"");
-	finalResult = finalResult.replace(/\{/g,"");
-	finalResult = finalResult.replace(/\.\.\./g,"");
-
-	return finalResult;
 }
 
 // Notify function - can only be used once at a time.
 function notify(text) {
-	document.getElementsByClassName("popup")[0].style.display = "block";
+	popupAnimation("show");
 	var popup = document.getElementById('popupContent');
 
 	if (text == "welcome") {
@@ -134,13 +174,26 @@ function notify(text) {
 		<div class='button bg' onclick="interface.exec('copy','` + session.currentVerse + `')">Copy verse</div> `;
 	} else if (text == "firsttime") {
 		popup.innerHTML = `
+		<h2>Welcome to Heb12!</h2>
+		<p>
+		Heb12 Mobile is a free open-sourced app designed to make reading the bible easy and hassle-free.
+		</p>
+		<p>
+		Tip: Tap on the bold text of a verse to get some info on it.
+		</p>`;
+	} else if (text == "settings") {
+		popup.innerHTML = `
+		<h2>Settings</h2>
 		`;
 	} else if (text == "info") {
 		popup.innerHTML = `
 		<img style="display:inline; float:left; margin-right:10px;" src="images/logo.png" width="150">
 		<div style="display:inline;">
-		   <h2>Heb12 Mobile v1.3</h2>
-		   <p>Welcome to Heb12 Mobile! This app was designed to make reading the bible easier than ever.</p>
+		   <h2>Heb12 Mobile v1.0</h2>
+		   <p>
+		   Heb12 Mobile is a free open-sourced app designed to make reading the bible easy and hassle-free. Feel free to contribute to the 
+		   <a target="_blank" href="https://github.com/heb12/heb12-android">Github repository</a>.
+		   </p>
 		</div>
 		<br>
 		<h2>Credits</h2>
@@ -148,8 +201,7 @@ function notify(text) {
 		<p>MasterOfTheTiger - Founder of Heb12 Ministries</p>
 		<p>Material.io - Material icons</p>
 		<p>Bible Labs - Formatted KJV API</p>
-		<p><a href="https://github.com/thiagobodruk" target="_blank">@thiagobodruk</a> - Offline Bible JSON files</p>
-		<a target="_blank" href="https://github.com/heb12/heb12-android">Visit Github repository</a>`;
+		<p><a href="https://github.com/thiagobodruk" target="_blank">@thiagobodruk</a> - Offline Bible JSON files</p>`;
 	} else if (text == 'hehe') {
 		session.titleClicks++
 		if (session.titleClicks >= 10) {
@@ -167,7 +219,7 @@ function random() {
 	var randomBook = Math.floor(Math.random() * books.length);
 	var randomChapter = Math.floor(Math.random() * session.currentTranslation[randomBook].chapters.length);
 	document.getElementById('page').innerHTML = load(books[randomBook], randomChapter);
-	settings("close");
+	settingsAnimation("close");
 }
 
 // Function to handle page updates
@@ -198,7 +250,6 @@ function update(option) {
 			chapter = session.currentTranslation[currentBookNumber - 1].chapters.length;
 		}
 	}
-
 	// Show overlay iframe if translation is KJV Online
 	if (session.currentTranslationString == "KJVONLINE") {
 		document.getElementById('book').value = book;
@@ -218,16 +269,21 @@ function update(option) {
 // Update the current translation
 function updateTranslation() {
 	var translation = document.getElementById('translation').value;
+	document.getElementById("kjvOnline").style.display = "none";
 	if (translation.startsWith("BBE")) {
 		session.currentTranslation = eval(bbe);
 		session.currentTranslationString = "BBE";
+	} else if (translation.startsWith("KJV 2000")) {
+		document.getElementById('kjvOnline').style.display = "none";
+		session.currentTranslationString = "KJV2000";
+		session.currentTranslation = eval(kjv);
 	} else if (translation.startsWith("KJV") && translation.endsWith("(Offline)")) {
 		session.currentTranslation = eval(kjv);
 		session.currentTranslationString = "KJV";
 	} else if (translation.startsWith("KJV") && translation.endsWith("(Online)")) {
 		document.getElementById('kjvOnline').style.display = "block";
 		session.currentTranslationString = "KJVONLINE";
-		session.currentTranslation = eval(kjv); // If current translation is KJV Online, use Offline KJV so that everything works.
+		session.currentTranslation = eval(kjv); // If current translation is KJV Offline, use Offline KJV so that everything works.
 	} else {
 		document.getElementById("kjvOnline").style.display = "none";
 	}
@@ -239,10 +295,28 @@ function search(thing) {
 }
 
 // Function to close settings menu
-function settings(action) {
+function settingsAnimation(action) {
 	if (action == "close") {
-		document.getElementById('settings').style.display = "none";
+		document.getElementById("settings").style.WebkitAnimationName = "slideOut";
+		setTimeout(function() {
+			document.getElementById('settings').style.display = "none";
+		},500);
 	} else {
 		document.getElementById('settings').style.display = "block";
+		document.getElementById("settings").style.WebkitAnimationName = "slideIn";
+	}
+}
+
+// Popup animation
+function popupAnimation(action) {
+	var popup = document.getElementsByClassName("popup")[0];
+	if (action == "show") {
+		popup.style.display = "block";
+		popup.style.WebkitAnimationName = "showPopup";
+	} else {
+		popup.style.WebkitAnimationName = "hidePopup";
+		setTimeout(function() {
+			popup.style.display = "none";
+		},500);
 	}
 }

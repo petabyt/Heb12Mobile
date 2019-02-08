@@ -15,6 +15,7 @@
 	<!-- Load Translations -->
 	<script type="text/javascript" src="bibles/kjv.js"></script>
 	<script type="text/javascript" src="bibles/bbe.js"></script>
+	<script type="text/javascript" src="bibles/kjv2000.js"></script>
 
 </head>
 <body onmousedown="session.mouseDown = true" onmouseup="session.mouseDown = false">
@@ -23,17 +24,17 @@
 	<center>
 		<select id="book" onchange="update()"></select>
 		<select id="chapter" onchange="update()"></select>
-		<div id="hamburger" class="button" onclick="settings('hehe')">
+		<div id="hamburger" class="button" onclick="settingsAnimation('hehe')">
 			<img src="images/menu.svg" width="45" >
 		</div>
 	</center>
 </div>
 
-<div id="main" onclick="settings('close')">
+<div id="main" onclick="settingsAnimation('close')">
 	<p id="page">
 		
 	</p>
-	<iframe id="kjvOnline" onmouseover="settings('close')">
+	<iframe id="kjvOnline" onmouseover="settingsAnimation('close')">
 		
 	</iframe>
 </div>
@@ -66,6 +67,9 @@
 				KJV (King James Version) (Offline)
 			</option>
 			<option>
+				KJV 2000 (King James Version 2000) (Offline)
+			</option>
+			<option>
 				KJV (King James Version) (Online)
 			</option>
 		</select>
@@ -94,7 +98,7 @@
 	<div id="popupContent">
 		
 	</div>
-	<div class="close" onclick="this.parentElement.style.display = 'none'">
+	<div class="close" onclick="popupAnimation('close')">
 		<p><b>Okay</b></p>
 	</div>
 </div>

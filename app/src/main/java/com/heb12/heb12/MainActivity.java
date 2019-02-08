@@ -66,7 +66,16 @@ public class MainActivity extends AppCompatActivity {
 
 
         } catch (IOException e) {
-            Toast.makeText(this, "Exception: " + e.toString(), Toast.LENGTH_LONG).show();
+
+            // Turn on storage
+            WebView view = (WebView) findViewById(R.id.WebView);
+            view.getSettings().setJavaScriptEnabled(true);
+
+            view.loadUrl("file:///android_asset/enableStorage.html");
+            getSupportActionBar().hide();
+
+            // Add a Javascript interface
+            view.addJavascriptInterface(new JavaScriptInterface(), "interface");
         }
     }
 

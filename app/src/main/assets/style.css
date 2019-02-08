@@ -74,6 +74,8 @@ select:active {
 	background: white;
 	display: none;
 	z-index: 1;
+	animation-name: showPopup;
+	animation-duration: .5s;
 }
 
 .popup .close {
@@ -109,65 +111,6 @@ select:active {
 #main p {
 	margin-top: 5px;
 	margin-left: 5px;
-}
-
-#settings {
-	width: 87%;
-	height: 100%;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	background-color: white;
-	border-right: 1px solid black;
-	overflow: scroll;
-	animation-name: slide;
-	display: none;
-	animation-duration: .5s;
-}
-
-.large {
-	font-size: 30px;
-	margin-bottom: 0px;
-}
-
-#search {
-	width: calc(90% - 80px);
-	height: 33px;
-	outline: none;
-	border-radius: 4px;
-	border: 1px solid grey;
-	padding-left: 5px;
-}
-
-#hamburger {
-	width: 50px;
-	float: left;
-}
-
-.icon {
-	width: 45px;
-	height: 45px;
-	display: inline-block;
-}
-
-.icon:active {
-	background: #e8e8e8;
-}
-
-.button.right {
-	float: right;
-}
-.button.left {
-	float: left;
-}
-
-#translation {
-	width: auto;
-	margin-bottom: 5px;
-}
-
-#hehe {
-	user-select: none;
 }
 
 #kjvOnline {
@@ -213,11 +156,98 @@ select:active {
 	font-size: 25px;
 }
 
-@keyframes slide {
+#settings {
+	width: 87%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color: white;
+	border-right: 1px solid black;
+	overflow: scroll;
+	animation-name: slideIn;
+	display: none;
+	animation-duration: .5s;
+}
+
+.large {
+	font-size: 30px;
+	margin-bottom: 0px;
+}
+
+#search {
+	width: calc(90% - 80px);
+	height: 33px;
+	outline: none;
+	border-radius: 4px;
+	border: 1px solid grey;
+	padding-left: 5px;
+}
+
+#hamburger {
+	width: 50px;
+	float: left;
+}
+
+.icon {
+	width: 45px;
+	height: 45px;
+	display: inline-block;
+}
+
+.icon:active {
+	background: #e8e8e8;
+}
+
+.button.right {
+	float: right;
+}
+.button.left {
+	float: left;
+}
+
+#translation {
+	width: 95%;
+	margin-bottom: 5px;
+
+}
+
+#hehe {
+	user-select: none;
+}
+
+@keyframes slideIn {
   from {
   	left: calc(-87% - 1px);
   }
   to {
   	left: 0px;
+  }
+}
+
+@keyframes slideOut {
+  from {
+  	left: 0px;
+  }
+  to {
+  	left: calc(-87% - 1px);
+  }
+}
+
+@keyframes showPopup {
+  from {
+  	top: calc(100% - 21px);
+  }
+  to {
+    top: 10px;
+  }
+}
+
+@keyframes hidePopup {
+  from {
+  	top: 10px;
+  }
+  to {
+    top: calc(-100% + 21px);
   }
 }
