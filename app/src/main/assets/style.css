@@ -74,7 +74,6 @@ select:active {
 	background: white;
 	display: none;
 	z-index: 1;
-	overflow-y: scroll;
 }
 
 .popup .close {
@@ -85,6 +84,7 @@ select:active {
 	top: calc(100% - 42px);
 	text-align: center;
 	user-select: none;
+	background: white;
 }
 .popup .close p {
 	margin-top: 12px;
@@ -94,8 +94,12 @@ select:active {
 	background: lightgrey;
 }
 
-#popup {
-	margin: 10px;
+#popupContent {
+	padding: 6px 6px;
+	width: calc(100% - 2px);
+	height: calc(100% - 54px);
+	overflow-y: scroll;
+
 }
 
 #verse:active {
@@ -115,8 +119,10 @@ select:active {
 	left: 0px;
 	background-color: white;
 	border-right: 1px solid black;
-	display: none;
 	overflow: scroll;
+	animation-name: slide;
+	display: none;
+	animation-duration: .5s;
 }
 
 .large {
@@ -205,4 +211,13 @@ select:active {
 
 .text.big {
 	font-size: 25px;
+}
+
+@keyframes slide {
+  from {
+  	left: calc(-87% - 1px);
+  }
+  to {
+  	left: 0px;
+  }
 }

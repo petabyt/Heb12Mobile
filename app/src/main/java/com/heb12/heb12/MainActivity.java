@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     stream.write(data.getBytes());
                     stream.close();
                 } catch (IOException e) {
-                    Toast.makeText(MainActivity.this, "Cannot write to config file", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Configuration file not found", Toast.LENGTH_SHORT).show();
                 }
             }
         }

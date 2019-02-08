@@ -28,8 +28,8 @@ window.onload = function() {
 		document.getElementById('chapter').innerHTML += "<option>" + i + "</option>";
 	}
 
+	// Do some things if the viewer is on safari on iOS
 	if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-		// If viewing via web on iphone
 		session.devmode = true;
 	}
 
@@ -50,9 +50,7 @@ window.onload = function() {
 		}	
 
 		// Parse config file into JS
-		if (data[1] == "") {
-			notify("Configuration File error");
-		} else {
+		if (!data[1] == "") {
 			var configuration = data[1];
 			configuration = configuration.replace(/\/\*[A-Za-z0-9 -!.:]+\*\//g,"");
 			configuration = configuration.split(";");
@@ -116,15 +114,18 @@ function load(book,chapter,verse) {
 // Notify function - can only be used once at a time.
 function notify(text) {
 	document.getElementsByClassName("popup")[0].style.display = "block";
+	var popup = document.getElementById('popupContent');
+
 	if (text == "welcome") {
-		document.getElementById("popup").innerHTML = "<h2>Welcome to Heb12 Mobile!</h2><br><span><b>Tip</b>: Tap on the bold number in front of a verse to get some info about it.</span>";
+		popup.innerHTML = "<h2>Welcome to Heb12 Mobile!</h2><br><span><b>Tip</b>: Tap on the bold number in front of a verse to get some info about it.</span>";
 	} else if (text.startsWith("verse")) {
 		var book = document.getElementById('book').value;
 		var chap = document.getElementById('chapter').value;
 		var verse = text.split("-")[1];
 		var entire = book + " " + chap + ":" + verse;
 		session.currentVerse = entire;
-		document.getElementById("popup").innerHTML = 
+
+		popup.innerHTML
 		`
 		<h2>` + entire + `</h2>
 		<span>` + load(book, chap, verse) + `</span>
@@ -134,9 +135,9 @@ function notify(text) {
 		<div class='button bg' onclick="interface.exec('copy','` + session.currentVerse + `')">Copy verse</div> 
 		`;
 	} else if (text == "firsttime") {
-		document.getElementById("popup").innerHTML = '<h2>Welcome to Heb12!</h2> <br> Testing';
+		popup.innerHTML = '<h2>Welcome to Heb12!</h2> <br> Testing';
 	} else if (text == "info") {
-		document.getElementById("popup").innerHTML = 
+		popup.innerHTML = 
 		`
 		<img style="display:inline; float:left; margin-right:10px;" src="images/logo.png" width="150">
 		<div style="display:inline;">
@@ -155,12 +156,12 @@ function notify(text) {
 	} else if (text == 'hehe') {
 		session.titleClicks++
 		if (session.titleClicks >= 10) {
-			document.getElementById("popup").innerHTML = '<h1>You found an easter egg!</h1><p>This popup is very cool. Also you must check out <a href="http://frypup.is-great.net" target="_blank">frypup.is-great.net</a>. It is a website @Pufflegamerz made and it might just be the best one in the world. Also, you <i>need</i> to see this picture of my pet guinea pig:</p><img width="320" src="images/blank.jpg">';
+			popup.innerHTML = '<h1>You found an easter egg!</h1><p>This popup is very cool. Also you must check out <a href="http://frypup.is-great.net" target="_blank">frypup.is-great.net</a>. It is a website @Pufflegamerz made and it might just be the best one in the world. Also, you <i>need</i> to see this picture of my pet guinea pig:</p><img width="320" src="images/blank.jpg">';
 		} else {
 			document.getElementsByClassName("popup")[0].style.display = "none";
 		}
 	} else {
-		document.getElementById("popup").innerHTML = text;
+		popup.innerHTML = text;
 	}
 }
 

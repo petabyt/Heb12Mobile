@@ -3,17 +3,22 @@
 <head>
 	<title>Heb12</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<center id='loadingMessage'>
 		<p>
 			Loading...
 		</p>
 	</center>
+
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<!-- Load Bibles -->
+
+	<!-- Load Translations -->
 	<script type="text/javascript" src="bibles/kjv.js"></script>
 	<script type="text/javascript" src="bibles/bbe.js"></script>
+
 </head>
 <body onmousedown="session.mouseDown = true" onmouseup="session.mouseDown = false">
+
 <div id="top">
 	<center>
 		<select id="book" onchange="update()"></select>
@@ -23,14 +28,16 @@
 		</div>
 	</center>
 </div>
+
 <div id="main" onclick="settings('close')">
 	<p id="page">
-		Hmm. There was an error.
+		
 	</p>
 	<iframe id="kjvOnline" onmouseover="settings('close')">
 		
 	</iframe>
 </div>
+
 <div id="bottom">
 	<div class="button left" onclick="update('previous')">
 		<span>Previous</span>
@@ -39,14 +46,7 @@
 		<span>Next</span>
 	</div>
 </div>
-<div class="popup">
-	<div id="popup">
-		
-	</div>
-	<div class="close" onclick="this.parentElement.style.display = 'none'">
-		<p><b>Okay</b></p>
-	</div>
-</div>
+
 <div id="settings">
 	<center>
 		<p class="large"><span id="hehe" onclick="notify('hehe')">Heb12</span> Mobile</p>
@@ -88,6 +88,15 @@
 			<p class="text">My voice will come to you in the morning, O Lord; in the morning will I send my prayer to you, and keep watch.</p>
 		</div>
 	</center>
+</div>
+
+<div class="popup">
+	<div id="popupContent">
+		
+	</div>
+	<div class="close" onclick="this.parentElement.style.display = 'none'">
+		<p><b>Okay</b></p>
+	</div>
 </div>
 </body>
 <script type="text/javascript" src="javascript.js"></script>
